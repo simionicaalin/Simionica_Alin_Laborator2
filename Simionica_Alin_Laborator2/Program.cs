@@ -1,14 +1,23 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
+using Simionica_Alin_Laborator2.Data;
 var builder = WebApplication.CreateBuilder(args);
 var connectionString = builder.Configuration.GetConnectionString("Simionica_Alin_Laborator2Context") ?? throw new InvalidOperationException("Connection string 'Simionica_Alin_Laborator2Context' not found.");
 
-builder.Services.AddDbContext<Simionica_Alin_Laborator2Context>(options => options.UseSqlServer(connectionString));
 
-// Add services to the container.
+
 builder.Services.AddRazorPages();
 
-var app = builder.Build();
+builder.Services.AddDbContext<Simionica_Alin_Laborator2Context>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("Simionica_Alin_Laborator2Context") ?? throw new InvalidOperationException("Connection string 'Simionica_Alin_Laborator2Context' not found.")));
 
+builder.Services.AddDbContext<LibraryIdentityContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("Simionica_Alin_Laborator2Context") ?? throw new InvalidOperationException("Connection string 'Simionica_Alin_Laborator2Context' not found.")));
+
+builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
+    .AddEntityFrameworkStores<LibraryIdentityContext>();
+
+var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
@@ -21,7 +30,9 @@ app.UseHttpsRedirection();
 
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
+
 
 app.MapStaticAssets();
 app.MapRazorPages()

@@ -16,7 +16,7 @@ namespace Simionica_Alin_Laborator2.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "10.0.12")
+                .HasAnnotation("ProductVersion", "10.0.13")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -54,7 +54,7 @@ namespace Simionica_Alin_Laborator2.Migrations
                         .HasColumnType("int");
 
                     b.Property<decimal>("Price")
-                        .HasColumnType("decimal(6,2)");
+                        .HasColumnType("decimal(6, 2)");
 
                     b.Property<int?>("PublisherID")
                         .HasColumnType("int");
@@ -98,6 +98,32 @@ namespace Simionica_Alin_Laborator2.Migrations
                     b.ToTable("BookCategory");
                 });
 
+            modelBuilder.Entity("Simionica_Alin_Laborator2.Models.Borrowing", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
+
+                    b.Property<int?>("BookID")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("MemberID")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("ReturnDate")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("ID");
+
+                    b.HasIndex("BookID");
+
+                    b.HasIndex("MemberID");
+
+                    b.ToTable("Borrowing");
+                });
+
             modelBuilder.Entity("Simionica_Alin_Laborator2.Models.Category", b =>
                 {
                     b.Property<int>("ID")
@@ -113,6 +139,35 @@ namespace Simionica_Alin_Laborator2.Migrations
                     b.HasKey("ID");
 
                     b.ToTable("Category");
+                });
+
+            modelBuilder.Entity("Simionica_Alin_Laborator2.Models.Member", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"));
+
+                    b.Property<string>("Adress")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FirstName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("LastName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Phone")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("ID");
+
+                    b.ToTable("Member");
                 });
 
             modelBuilder.Entity("Simionica_Alin_Laborator2.Models.Publisher", b =>
@@ -166,6 +221,21 @@ namespace Simionica_Alin_Laborator2.Migrations
                     b.Navigation("Category");
                 });
 
+            modelBuilder.Entity("Simionica_Alin_Laborator2.Models.Borrowing", b =>
+                {
+                    b.HasOne("Simionica_Alin_Laborator2.Models.Book", "Book")
+                        .WithMany("Borrowings")
+                        .HasForeignKey("BookID");
+
+                    b.HasOne("Simionica_Alin_Laborator2.Models.Member", "Member")
+                        .WithMany("Borrowings")
+                        .HasForeignKey("MemberID");
+
+                    b.Navigation("Book");
+
+                    b.Navigation("Member");
+                });
+
             modelBuilder.Entity("Simionica_Alin_Laborator2.Models.Author", b =>
                 {
                     b.Navigation("Books");
@@ -174,11 +244,18 @@ namespace Simionica_Alin_Laborator2.Migrations
             modelBuilder.Entity("Simionica_Alin_Laborator2.Models.Book", b =>
                 {
                     b.Navigation("BookCategories");
+
+                    b.Navigation("Borrowings");
                 });
 
             modelBuilder.Entity("Simionica_Alin_Laborator2.Models.Category", b =>
                 {
                     b.Navigation("BookCategories");
+                });
+
+            modelBuilder.Entity("Simionica_Alin_Laborator2.Models.Member", b =>
+                {
+                    b.Navigation("Borrowings");
                 });
 
             modelBuilder.Entity("Simionica_Alin_Laborator2.Models.Publisher", b =>
